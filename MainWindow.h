@@ -17,7 +17,7 @@
  */
 
 #include <QMainWindow>
-#include "Ui_window.h"
+#include "Ui_pwatchdog.h"
 
 #ifndef MAINWINDOW_H_
 #define MAINWINDOW_H_

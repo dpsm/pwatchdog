@@ -1,0 +1,6 @@
+# GIT IGNORE FILE
+release/*
+debug/*
+
+Makefile*
+ui_*

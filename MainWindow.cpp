@@ -18,12 +18,15 @@
 
 #include "MainWindow.h"
 #include <QString>
+#include <QIntValidator>
 
 MainWindow::MainWindow() :
 	QMainWindow(NULL, Qt::Window | Qt::WindowMinimizeButtonHint)
 {
 	this->ui.setupUi(this);
 
+	QValidator* validator = new QIntValidator(0, 99999, this);
+	this->ui.procIdText->setValidator(validator);
 	QObject::connect(this->ui.newButton, SIGNAL(released())
 			, this, SLOT(addNewProcess()));
 }
