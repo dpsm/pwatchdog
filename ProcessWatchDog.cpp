@@ -17,31 +17,29 @@
  */
 
 #include <qthread.h>
-#include "AbstractProcessView.h"
 #include "ProcessWatchDog.h"
+#include "ProcessHandler.h"
 
-ProcessWatchDog::ProcessWatchDog(Model* _model, int _process_id)
-	: model(_model), process_id(_process_id)
+ProcessWatchDog::ProcessWatchDog(Model* _model, Process* _proc)
+	: model(_model), proc(_proc)
 {
+	this->proc->watchdog = this;
 }
 
 ProcessWatchDog::~ProcessWatchDog()
 {
 }
 
-void ProcessWatchDog::watch()
+void ProcessWatchDog::run()
 {
-	AbstractProcessView::ProcessState state;
-
-	state = AbstractProcessView::RUNNNING;
-	model->processStateChanged(this->process_id, state);
-	ThreadProxy::sleep(3);
-	state = AbstractProcessView::FINISHED;
-	model->processStateChanged(this->process_id, state);
+	ProcessHandler::handleProcess(this->proc, this->model);
 }
 
-void ProcessWatchDog::cancel()
+void ProcessWatchDog::stop()
 {
+	this->terminate();
+	this->wait();
 
+	this->proc->state = Process::DETACHED;
+	model->processStateChanged(this->proc);
 }
-

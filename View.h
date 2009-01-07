@@ -16,35 +16,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <qmainwindow.h>
 #include <qglobal.h>
 #include <qstring.h>
 #include <qvalidator.h>
 
-#include "Ui_pwatchdog.h"
-
 #include "AbstractProcessView.h"
+#include "PWatchdogEvents.h"
+#include "Ui_pwatchdog.h"
 #include "Model.h"
 
 #ifndef VIEW_H_
 #define VIEW_H_
 
-class MainWindow : public QMainWindow, public AbstractProcessView{
+class MainWindow : public AbstractProcessView {
 	Q_OBJECT
 
 public:
 	MainWindow();
 	virtual ~MainWindow();
-
 	inline Ui::window getUi() {return ui;}
-	virtual void processStateChanged(int process_id, AbstractProcessView::ProcessState state);
+	virtual bool event(QEvent* _event);
 
 private slots:
+	void currentProcessChanged();
 	void detachFromProcess();
 	void attachToProcess();
 	void addNewProcess();
 
 private:
+	void processStateChanged(ProcessChangedEvent* _event);
+	void shutdown(ShutDownEvent* _event);
+	bool isProcessRegistered(QString text);
 	Ui::window ui;
 	Model model;
 };

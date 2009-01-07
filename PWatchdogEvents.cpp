@@ -15,17 +15,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "PWatchdogEvents.h"
 
-#ifndef ABSTRACTPROCESSVIEW_H_
-#define ABSTRACTPROCESSVIEW_H_
+int ProcessChangedEvent::PROCESS_CHANGED_EVENT = QEvent::User + 0x01;
+int ShutDownEvent::SHUTDOWN_EVENT 			   = QEvent::User + 0x02;
 
-#include "qmainwindow.h"
-
-class AbstractProcessView : public QMainWindow
+ProcessChangedEvent::ProcessChangedEvent(Process* _proc) :
+	 QEvent(QEvent::Type(ProcessChangedEvent::PROCESS_CHANGED_EVENT)), proc(_proc)
 {
-	public:
-		AbstractProcessView(QWidget *parent = 0, Qt::WindowFlags flags = 0) :
-			QMainWindow(parent, flags) {}
-};
+}
 
-#endif /* ABSTRACTPROCESSVIEW_H_ */
+ShutDownEvent::ShutDownEvent() : QEvent(QEvent::Type(ShutDownEvent::SHUTDOWN_EVENT))
+{
+}
+

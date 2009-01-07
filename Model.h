@@ -19,25 +19,47 @@
 #ifndef MODEL_H_
 #define MODEL_H_
 
+#include <qapplication.h>
 #include <qlist.h>
+
 #include "AbstractProcessView.h"
+#include "PWatchDogEvents.h"
 #include "ProcessWatchDog.h"
+#include "ProcessHandler.h"
 
-class Model {
-public:
-	Model();
-	virtual ~Model();
+class ProcessWatchDog;
 
-	void processStateChanged(int process_id, AbstractProcessView::ProcessState state);
-	void detachFromProcess(int process_id);
-	void attachToProcess(int process_id);
+class Process
+{
+	public:
+		enum State {DETACHED, ATTACHED, FINISHED, UNKNOWN};
+		Process(int _id, State _state);
 
-	void attachView(AbstractProcessView* view);
-	void detachView(AbstractProcessView* view);
-	void shutdown();
+		ProcessWatchDog* watchdog;
+		State 			 state;
+		int   			 id;
+};
 
-private:
-	QList<AbstractProcessView*> views;
+class Model
+{
+	public:
+		Model();
+		virtual ~Model();
+
+		void processStateChanged(Process* _proc);
+		void detachFromProcess(Process* _proc);
+		void attachToProcess(Process* _proc);
+
+		Process* addNewProcess(int _id);
+		Process* getProcess(int _id);
+
+		void attachView(AbstractProcessView* _view);
+		void detachView(AbstractProcessView* _view);
+		void shutdown();
+
+	private:
+		QList<AbstractProcessView*> views;
+		QList<Process*> procs;
 };
 
 #endif /* MODEL_H_ */

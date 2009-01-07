@@ -19,8 +19,7 @@
 #include "View.h"
 
 MainWindow::MainWindow() :
-	QMainWindow(NULL, Qt::Window | Qt::WindowMinimizeButtonHint),
-	AbstractProcessView()
+	AbstractProcessView(NULL, Qt::Window | Qt::WindowMinimizeButtonHint)
 {
 	model.attachView(this);
 	this->ui.setupUi(this);
@@ -34,10 +33,18 @@ MainWindow::MainWindow() :
 			, this, SLOT(attachToProcess()));
 	QObject::connect(this->ui.newButton, SIGNAL(released())
 			, this, SLOT(addNewProcess()));
+	QObject::connect(this->ui.procListWidget, SIGNAL(itemSelectionChanged())
+				, this, SLOT(currentProcessChanged()));
 }
 
 MainWindow::~MainWindow()
 {
+}
+
+void MainWindow::currentProcessChanged()
+{
+	QListWidgetItem* item = this->ui.procListWidget->currentItem();
+	this->ui.procIdText->setText(item->text());
 }
 
 void MainWindow::detachFromProcess()
@@ -47,7 +54,11 @@ void MainWindow::detachFromProcess()
 	{
 		QListWidgetItem* item = selected.first();
 		int id = item->text().toInt();
-		this->model.detachFromProcess(id);
+		Process* process = this->model.getProcess(id);
+		if(process != NULL && process->state != Process::DETACHED)
+		{
+			this->model.detachFromProcess(process);
+		}
 	}
 }
 
@@ -58,37 +69,88 @@ void MainWindow::attachToProcess()
 	{
 		QListWidgetItem* item = selected.first();
 		int id = item->text().toInt();
-		this->model.attachToProcess(id);
+		Process* process = this->model.getProcess(id);
+		if(process != NULL && process->state != Process::ATTACHED)
+		{
+			this->model.attachToProcess(process);
+		}
 	}
 }
 
 void MainWindow::addNewProcess()
 {
 	QString text = this->ui.procIdText->text();
-	if(text.length() > 0x00)
+	if(text.length() > 0x00 && !isProcessRegistered(text))
 	{
-		this->ui.procListWidget->addItem(text);
+		Process* process = this->model.addNewProcess(text.toInt());
+		if(process != NULL)
+		{
+			this->ui.procListWidget->addItem(QString::number(process->id));
+		}
 	}
 }
 
-void MainWindow::processStateChanged(int process_id, AbstractProcessView::ProcessState state)
+bool MainWindow::isProcessRegistered(QString text)
 {
+	int index = 0x00;
+	int size  = 0x00;
+
+	size = this->ui.procListWidget->count();
+	for (index = 0; index < size; ++index) {
+		QListWidgetItem* item = this->ui.procListWidget->item(index);
+		if (item->text() == text) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool MainWindow::event(QEvent* _event)
+{
+	QEvent::Type type = _event->type();
+	if(type == QEvent::Type(ProcessChangedEvent::PROCESS_CHANGED_EVENT))
+	{
+		ProcessChangedEvent* procEvent = static_cast<ProcessChangedEvent*>(_event);
+		this->processStateChanged(procEvent);
+	} else
+	if (type == QEvent::Type(ShutDownEvent::SHUTDOWN_EVENT))
+	{
+		ShutDownEvent* procEvent = static_cast<ShutDownEvent*>(_event);
+		this->shutdown(procEvent);
+	} else
+	{
+		return AbstractProcessView::event(_event);
+	}
+	return true;
+}
+
+void MainWindow::processStateChanged(ProcessChangedEvent* _event)
+{
+	Process* process = _event->getSource();
+
 	QString title;
 	title.append("Process [");
-	title.append(QString::number(process_id));
+	title.append(QString::number(process->id));
 	title.append("] State = ");
-
-	switch(state)
+	switch (process->state)
 	{
-		case RUNNNING:
-			title.append("RUNNNING");
+		case Process::DETACHED:
+			title.append("DETACHED");
 		break;
-		case FINISHED:
+		case Process::ATTACHED:
+			title.append("ATTACHED");
+		break;
+		case Process::FINISHED:
 			title.append("FINISHED");
 		break;
-		case ERROR:
+		case Process::UNKNOWN:
 			title.append("ERROR");
 		break;
 	}
 	this->setWindowTitle(title);
+}
+
+void MainWindow::shutdown(ShutDownEvent* _event)
+{
+	this->setWindowTitle("Initializing shutdown process...");
 }

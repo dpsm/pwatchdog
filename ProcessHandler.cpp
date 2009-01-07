@@ -15,17 +15,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "ProcessHandler.h"
+#include <windows.h>
 
-#ifndef ABSTRACTPROCESSVIEW_H_
-#define ABSTRACTPROCESSVIEW_H_
-
-#include "qmainwindow.h"
-
-class AbstractProcessView : public QMainWindow
+void ProcessHandler::handleProcess(Process* proc, Model* model)
 {
-	public:
-		AbstractProcessView(QWidget *parent = 0, Qt::WindowFlags flags = 0) :
-			QMainWindow(parent, flags) {}
-};
-
-#endif /* ABSTRACTPROCESSVIEW_H_ */
+	HANDLE process = OpenProcess(SYNCHRONIZE, FALSE, proc->id);
+	if(process != NULL)
+	{
+		proc->state = Process::ATTACHED;
+		model->processStateChanged(proc);
+		if(WaitForSingleObject(process, INFINITE) != WAIT_FAILED)
+		{
+			proc->state = Process::FINISHED;
+			model->processStateChanged(proc);
+		}
+		else
+		{
+			proc->state = Process::UNKNOWN;
+			model->processStateChanged(proc);
+		}
+		CloseHandle(process);
+	}
+	else
+	{
+		proc->state = Process::UNKNOWN;
+		model->processStateChanged(proc);
+	}
+}

@@ -21,33 +21,22 @@
 
 #include <qthread.h>
 #include "Model.h"
+
+class Process;
 class Model;
 
-class ThreadProxy: public QThread {
+class ProcessWatchDog : public QThread {
 public:
-	static void sleep(unsigned long secs) {
-		QThread::sleep(secs);
-	}
-	static void msleep(unsigned long msecs) {
-		QThread::msleep(msecs);
-	}
-	static void usleep(unsigned long usecs) {
-		QThread::usleep(usecs);
-	}
-};
-
-class ProcessWatchDog {
-public:
-	ProcessWatchDog(Model* _model, int _process_id);
+	ProcessWatchDog(Model* _model, Process* _proc);
 	virtual ~ProcessWatchDog();
 
-	inline int getProcessId() {return this->process_id;}
+	inline Process* getProcess() {return this->proc;}
 
-	void watch();
-	void cancel();
+	void stop();
+	void run();
 private:
-	Model* model;
-	int	   process_id;
+	Process* proc;
+	Model*	 model;
 };
 
 #endif /* PROCESSWATCHDOG_H_ */

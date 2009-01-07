@@ -15,17 +15,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#ifndef PROCESSHANDLER_H_
+#define PROCESSHANDLER_H_
 
-#ifndef ABSTRACTPROCESSVIEW_H_
-#define ABSTRACTPROCESSVIEW_H_
+#include "Model.h"
 
-#include "qmainwindow.h"
+class Process;
+class Model;
 
-class AbstractProcessView : public QMainWindow
+class ProcessHandler
 {
-	public:
-		AbstractProcessView(QWidget *parent = 0, Qt::WindowFlags flags = 0) :
-			QMainWindow(parent, flags) {}
+public:
+	static void handleProcess(Process* process, Model* model);
 };
 
-#endif /* ABSTRACTPROCESSVIEW_H_ */
+#endif /* PROCESSHANDLER_H_ */
