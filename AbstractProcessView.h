@@ -16,14 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "View.h"
-
-int main(int argc, char **argv)
-{
-	QApplication app(argc, argv);
-	MainWindow window;
-	window.show();
-	return app.exec();
-}
+#ifndef ABSTRACTPROCESSVIEW_H_
+#define ABSTRACTPROCESSVIEW_H_
 
 
+class AbstractProcessView {
+public:
+	enum ProcessState {RUNNNING, FINISHED, ERROR};
+
+	virtual void processStateChanged(int process_id, AbstractProcessView::ProcessState state) = 0x00;
+};
+
+#endif /* ABSTRACTPROCESSVIEW_H_ */

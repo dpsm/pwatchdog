@@ -18,6 +18,7 @@
 
 RESOURCES += pwatchdog.qrc
 FORMS += pwatchdog.ui
-HEADERS += MainWindow.h
-SOURCES += main.cpp MainWindow.cpp
+HEADERS += View.h Model.h AbstractProcessView.h ProcessWatchDog.h
+SOURCES += View.cpp Model.cpp ProcessWatchDog.cpp
+SOURCES += main.cpp
 CONFIG += qt moc

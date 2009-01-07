@@ -16,31 +16,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "MainWindow.h"
-#include <QString>
-#include <QIntValidator>
+#include <qthread.h>
+#include "AbstractProcessView.h"
+#include "ProcessWatchDog.h"
 
-MainWindow::MainWindow() :
-	QMainWindow(NULL, Qt::Window | Qt::WindowMinimizeButtonHint)
+ProcessWatchDog::ProcessWatchDog(Model* _model, int _process_id)
+	: model(_model), process_id(_process_id)
 {
-	this->ui.setupUi(this);
-
-	QValidator* validator = new QIntValidator(0, 99999, this);
-	this->ui.procIdText->setValidator(validator);
-	QObject::connect(this->ui.newButton, SIGNAL(released())
-			, this, SLOT(addNewProcess()));
 }
 
-MainWindow::~MainWindow()
+ProcessWatchDog::~ProcessWatchDog()
+{
+}
+
+void ProcessWatchDog::watch()
+{
+	AbstractProcessView::ProcessState state;
+
+	state = AbstractProcessView::RUNNNING;
+	model->processStateChanged(this->process_id, state);
+	ThreadProxy::sleep(3);
+	state = AbstractProcessView::FINISHED;
+	model->processStateChanged(this->process_id, state);
+}
+
+void ProcessWatchDog::cancel()
 {
 
 }
 
-void MainWindow::addNewProcess()
-{
-	QString text = this->ui.procIdText->text();
-	if(text.length() > 0x00)
-	{
-		this->ui.procListWidget->addItem(text);
-	}
-}

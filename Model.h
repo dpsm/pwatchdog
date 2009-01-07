@@ -16,26 +16,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <QMainWindow>
-#include "Ui_pwatchdog.h"
+#ifndef MODEL_H_
+#define MODEL_H_
 
-#ifndef MAINWINDOW_H_
-#define MAINWINDOW_H_
+#include <qlist.h>
+#include "AbstractProcessView.h"
+#include "ProcessWatchDog.h"
 
-class MainWindow : public QMainWindow{
-	Q_OBJECT
-
+class Model {
 public:
-	MainWindow();
-	virtual ~MainWindow();
+	Model();
+	virtual ~Model();
 
-	inline Ui::window getUi() {return ui;}
+	void processStateChanged(int process_id, AbstractProcessView::ProcessState state);
+	void detachFromProcess(int process_id);
+	void attachToProcess(int process_id);
 
-private slots:
-	void addNewProcess();
+	void attachView(AbstractProcessView* view);
+	void detachView(AbstractProcessView* view);
+	void shutdown();
 
 private:
-	Ui::window ui;
+	QList<AbstractProcessView*> views;
 };
 
-#endif /* MAINWINDOW_H_ */
+#endif /* MODEL_H_ */

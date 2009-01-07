@@ -16,14 +16,52 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "View.h"
+#include "Model.h"
 
-int main(int argc, char **argv)
+Model::Model()
 {
-	QApplication app(argc, argv);
-	MainWindow window;
-	window.show();
-	return app.exec();
 }
 
+Model::~Model()
+{
+}
 
+void Model::processStateChanged(int process_id, AbstractProcessView::ProcessState state)
+{
+	QListIterator<AbstractProcessView*> i(this->views);
+	while (i.hasNext())
+	{
+		i.next()->processStateChanged(process_id, state);
+	}
+}
+
+void Model::attachView(AbstractProcessView* view)
+{
+	if(!this->views.contains(view))
+	{
+		this->views.append(view);
+	}
+}
+
+void Model::detachView(AbstractProcessView* view)
+{
+	if(this->views.contains(view))
+	{
+		this->views.removeAll(view);
+	}
+}
+
+void Model::detachFromProcess(int process_id)
+{
+
+}
+
+void Model::attachToProcess(int process_id)
+{
+	ProcessWatchDog* watchdog = new ProcessWatchDog(this, process_id);
+	watchdog->watch();
+}
+
+void Model::shutdown()
+{
+}

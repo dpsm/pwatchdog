@@ -16,14 +16,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "View.h"
+#ifndef PROCESSWATCHDOG_H_
+#define PROCESSWATCHDOG_H_
 
-int main(int argc, char **argv)
-{
-	QApplication app(argc, argv);
-	MainWindow window;
-	window.show();
-	return app.exec();
-}
+#include <qthread.h>
+#include "Model.h"
+class Model;
 
+class ThreadProxy: public QThread {
+public:
+	static void sleep(unsigned long secs) {
+		QThread::sleep(secs);
+	}
+	static void msleep(unsigned long msecs) {
+		QThread::msleep(msecs);
+	}
+	static void usleep(unsigned long usecs) {
+		QThread::usleep(usecs);
+	}
+};
 
+class ProcessWatchDog {
+public:
+	ProcessWatchDog(Model* _model, int _process_id);
+	virtual ~ProcessWatchDog();
+
+	inline int getProcessId() {return this->process_id;}
+
+	void watch();
+	void cancel();
+private:
+	Model* model;
+	int	   process_id;
+};
+
+#endif /* PROCESSWATCHDOG_H_ */
