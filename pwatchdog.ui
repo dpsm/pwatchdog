@@ -223,7 +223,7 @@
       <item>
        <widget class="QToolButton" name="toolButton" >
         <property name="enabled" >
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="minimumSize" >
          <size>

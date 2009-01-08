@@ -41,6 +41,41 @@ void MainWindow::currentProcessChanged()
 {
 	QListWidgetItem* item = this->ui.procListWidget->currentItem();
 	this->ui.procIdText->setText(item->text());
+
+	Process* process = this->model.getProcess(item->text().toInt());
+	if (process != NULL) {
+		updateProcessStatusIcon(process);
+	}
+}
+
+void MainWindow::updateProcessStatusIcon(Process* _proc)
+{
+	QString tooltip;
+	QString image;
+	switch (_proc->state) {
+		case Process::ATTACHED:
+			tooltip = "Attached";
+			image = QString::fromUtf8(":/images/images/attached.png");
+		break;
+		case Process::DETACHED:
+			tooltip = "Detached";
+			image = QString::fromUtf8(":/images/images/detached.png");
+		break;
+		case Process::FAILED_ATTACH:
+		case Process::FAILED_WAIT:
+			tooltip = "Failed";
+			image = QString::fromUtf8(":/images/images/error.png");
+		break;
+		case Process::FINISHED:
+			tooltip = "Finished";
+			image = QString::fromUtf8(":/images/images/finished.png");
+		break;
+	}
+	QIcon icon;
+	icon.addPixmap(QPixmap(image), QIcon::Normal, QIcon::Off);
+	this->ui.toolButton->setIcon(icon);
+	this->ui.toolButton->setIconSize(QSize(80, 80));
+	this->ui.toolButton->setToolTip(tooltip);
 }
 
 void MainWindow::detachFromProcess()
@@ -86,7 +121,7 @@ void MainWindow::addNewProcess()
 	}
 }
 
-bool MainWindow::isProcessRegistered(QString text)
+bool MainWindow::isProcessRegistered(QString _text)
 {
 	int index = 0x00;
 	int size = 0x00;
@@ -95,7 +130,7 @@ bool MainWindow::isProcessRegistered(QString text)
 	for (index = 0; index < size; ++index)
 	{
 		QListWidgetItem* item = this->ui.procListWidget->item(index);
-		if (item->text() == text)
+		if (item->text() == _text)
 		{
 			return true;
 		}
@@ -128,27 +163,27 @@ void MainWindow::processStateChanged(ProcessChangedEvent* _event)
 {
 	Process* process = _event->getSource();
 
-	QString title;
-	title.append("Process [");
-	title.append(QString::number(process->id));
-	title.append("] State = ");
+	QString title("Process [%1]; State [%2].");
+	QString state;
+	title = title.arg(QString::number(process->id));
 	switch (process->state)
 	{
 	case Process::DETACHED:
-		title.append("DETACHED");
+		state = "DETACHED";
 		break;
 	case Process::ATTACHED:
-		title.append("ATTACHED");
+		state = "ATTACHED";
 		break;
 	case Process::FINISHED:
-		title.append("FINISHED");
+		state = "FINISHED";
 		break;
 	case Process::FAILED_ATTACH:
 	case Process::FAILED_WAIT:
-		title.append("ERROR");
+		state = "ERROR";
 		break;
 	}
-	this->setWindowTitle(title);
+	this->setWindowTitle(title.arg(state));
+	this->updateProcessStatusIcon(process);
 }
 
 void MainWindow::shutdown(ShutDownEvent* _event)

@@ -35,8 +35,7 @@ Q_OBJECT
 public:
 	MainWindow()	;
 	virtual~ MainWindow();
-	inline Ui::window getUi()
-	{	return ui;}
+	inline Ui::window getUi(){return ui;}
 	virtual bool event(QEvent* _event);
 
 private slots:
@@ -47,8 +46,9 @@ private slots:
 
 private:
 	void processStateChanged(ProcessChangedEvent* _event);
+	void updateProcessStatusIcon(Process* _proc);
+	bool isProcessRegistered(QString _text);
 	void shutdown(ShutDownEvent* _event);
-	bool isProcessRegistered(QString text);
 	Ui::window ui;
 	Model model;
 };
