@@ -30,6 +30,10 @@
   <property name="windowTitle" >
    <string>Process Watch Dog</string>
   </property>
+  <property name="windowIcon" >
+   <iconset resource="pwatchdog.qrc" >
+    <normaloff>:/images/images/icon.png</normaloff>:/images/images/icon.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget" >
    <widget class="Line" name="line" >
     <property name="geometry" >
@@ -110,7 +114,13 @@
      </property>
      <property name="icon" >
       <iconset resource="pwatchdog.qrc" >
-       <normaloff>:/images/images/icon1.png</normaloff>:/images/images/icon1.png</iconset>
+       <normaloff>:/images/images/new.png</normaloff>:/images/images/new.png</iconset>
+     </property>
+     <property name="iconSize" >
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
      </property>
     </widget>
     <widget class="QLineEdit" name="procIdText" >
@@ -140,7 +150,13 @@
      </property>
      <property name="icon" >
       <iconset resource="pwatchdog.qrc" >
-       <normaloff>:/images/images/icon2.png</normaloff>:/images/images/icon2.png</iconset>
+       <normaloff>:/images/images/attached.png</normaloff>:/images/images/attached.png</iconset>
+     </property>
+     <property name="iconSize" >
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
      </property>
     </widget>
     <widget class="QLabel" name="label_4" >
@@ -182,7 +198,13 @@
      </property>
      <property name="icon" >
       <iconset resource="pwatchdog.qrc" >
-       <normaloff>:/images/images/icon3.png</normaloff>:/images/images/icon3.png</iconset>
+       <normaloff>:/images/images/detached.png</normaloff>:/images/images/detached.png</iconset>
+     </property>
+     <property name="iconSize" >
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
      </property>
     </widget>
     <widget class="QGroupBox" name="groupBox_3" >

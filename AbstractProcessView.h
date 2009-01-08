@@ -21,11 +21,13 @@
 
 #include "qmainwindow.h"
 
-class AbstractProcessView : public QMainWindow
+class AbstractProcessView: public QMainWindow
 {
-	public:
-		AbstractProcessView(QWidget *parent = 0, Qt::WindowFlags flags = 0) :
-			QMainWindow(parent, flags) {}
+public:
+	AbstractProcessView(QWidget *parent = 0, Qt::WindowFlags flags = 0) :
+		QMainWindow(parent, flags)
+	{
+	}
 };
 
 #endif /* ABSTRACTPROCESSVIEW_H_ */

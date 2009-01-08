@@ -25,18 +25,22 @@
 class Process;
 class Model;
 
-class ProcessWatchDog : public QThread {
+class ProcessWatchDog: public QThread
+{
 public:
 	ProcessWatchDog(Model* _model, Process* _proc);
 	virtual ~ProcessWatchDog();
 
-	inline Process* getProcess() {return this->proc;}
+	inline Process* getProcess()
+	{
+		return this->proc;
+	}
 
 	void stop();
 	void run();
 private:
 	Process* proc;
-	Model*	 model;
+	Model* model;
 };
 
 #endif /* PROCESSWATCHDOG_H_ */

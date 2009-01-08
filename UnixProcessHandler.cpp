@@ -16,30 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "ProcessHandler.h"
-#include <windows.h>
 
 void ProcessHandler::handleProcess(Process* proc, Model* model)
 {
-	HANDLE process = OpenProcess(SYNCHRONIZE, FALSE, proc->id);
-	if(process != NULL)
-	{
-		proc->state = Process::ATTACHED;
-		model->processStateChanged(proc);
-		if(WaitForSingleObject(process, INFINITE) != WAIT_FAILED)
-		{
-			proc->state = Process::FINISHED;
-			model->processStateChanged(proc);
-		}
-		else
-		{
-			proc->state = Process::UNKNOWN;
-			model->processStateChanged(proc);
-		}
-		CloseHandle(process);
-	}
-	else
-	{
-		proc->state = Process::UNKNOWN;
-		model->processStateChanged(proc);
-	}
+	proc->state = Process::FAILED_ATTACH;
+	model->processStateChanged(proc);
 }

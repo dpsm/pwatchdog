@@ -22,23 +22,27 @@
 #include "Model.h"
 
 class Process;
-class ProcessChangedEvent : public QEvent
+class ProcessChangedEvent: public QEvent
 {
-	public:
-		static int PROCESS_CHANGED_EVENT;
+public:
+	static QEvent::Type PROCESS_CHANGED_EVENT;
 
-		ProcessChangedEvent(Process* _proc);
-		inline Process* getSource() {return this->proc;};
+	ProcessChangedEvent(Process* _proc);
+	inline Process* getSource()
+	{
+		return this->proc;
+	}
+	;
 
-	private:
-		Process* proc;
+private:
+	Process* proc;
 };
 
-class ShutDownEvent : public QEvent
+class ShutDownEvent: public QEvent
 {
-	public:
-		static int SHUTDOWN_EVENT;
-		ShutDownEvent();
+public:
+	static QEvent::Type SHUTDOWN_EVENT;
+	ShutDownEvent();
 };
 
 #endif /* PWATCHDOGEVENTS_H_ */

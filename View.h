@@ -28,13 +28,15 @@
 #ifndef VIEW_H_
 #define VIEW_H_
 
-class MainWindow : public AbstractProcessView {
-	Q_OBJECT
+class MainWindow: public AbstractProcessView
+{
+Q_OBJECT
 
 public:
-	MainWindow();
-	virtual ~MainWindow();
-	inline Ui::window getUi() {return ui;}
+	MainWindow()	;
+	virtual~ MainWindow();
+	inline Ui::window getUi()
+	{	return ui;}
 	virtual bool event(QEvent* _event);
 
 private slots:

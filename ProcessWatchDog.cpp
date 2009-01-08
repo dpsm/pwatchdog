@@ -20,8 +20,8 @@
 #include "ProcessWatchDog.h"
 #include "ProcessHandler.h"
 
-ProcessWatchDog::ProcessWatchDog(Model* _model, Process* _proc)
-	: model(_model), proc(_proc)
+ProcessWatchDog::ProcessWatchDog(Model* _model, Process* _proc) :
+	model(_model), proc(_proc)
 {
 	this->proc->watchdog = this;
 }

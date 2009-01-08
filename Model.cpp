@@ -17,7 +17,8 @@
  */
 #include "Model.h"
 
-Process::Process(int _id, State _state) : id(_id), state(_state), watchdog(NULL)
+Process::Process(int _id, State _state) :
+	id(_id), state(_state), watchdog(NULL)
 {
 }
 
@@ -31,7 +32,7 @@ Model::~Model()
 
 void Model::attachView(AbstractProcessView* view)
 {
-	if(!this->views.contains(view))
+	if (!this->views.contains(view))
 	{
 		this->views.append(view);
 	}
@@ -39,7 +40,7 @@ void Model::attachView(AbstractProcessView* view)
 
 void Model::detachView(AbstractProcessView* view)
 {
-	if(this->views.contains(view))
+	if (this->views.contains(view))
 	{
 		this->views.removeAll(view);
 	}
@@ -51,25 +52,28 @@ void Model::processStateChanged(Process* _proc)
 	while (viewsIterator.hasNext())
 	{
 		ProcessChangedEvent* event = new ProcessChangedEvent(_proc);
-		AbstractProcessView* view  = viewsIterator.next();
+		AbstractProcessView* view = viewsIterator.next();
 		QApplication::instance()->postEvent(view, event);
 	}
 
-	bool shutdown = false;
-	QListIterator<Process*> procsIterator(this->procs);
-	while (procsIterator.hasNext())
-	{
-		shutdown = procsIterator.next()->state == Process::FINISHED;
-	}
+	if (_proc->state == Process::FINISHED) {
+		bool shutdown = true;
+		QListIterator<Process*> procsIterator(this->procs);
+		while (procsIterator.hasNext())
+		{
+			shutdown &= procsIterator.next()->state == Process::FINISHED;
+		}
 
-	if (shutdown) {
-		this->shutdown();
+		if (shutdown)
+		{
+			this->shutdown();
+		}
 	}
 }
 
 void Model::detachFromProcess(Process* _proc)
 {
-	if(_proc->watchdog != NULL)
+	if (_proc->watchdog != NULL)
 	{
 		_proc->watchdog->stop();
 	}
@@ -84,7 +88,7 @@ void Model::attachToProcess(Process* _proc)
 Process* Model::addNewProcess(int _id)
 {
 	Process* process = this->getProcess(_id);
-	if(process == NULL)
+	if (process == NULL)
 	{
 		process = new Process(_id, Process::DETACHED);
 		this->procs.append(process);
@@ -100,7 +104,8 @@ Process* Model::getProcess(int _id)
 	while (iterator.hasNext())
 	{
 		Process* current = iterator.next();
-		if(current->id == _id){
+		if (current->id == _id)
+		{
 			process = current;
 			break;
 		}

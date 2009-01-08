@@ -1,7 +1,10 @@
 <RCC>
   <qresource prefix="images" >
-    <file>images/icon3.png</file>
-    <file>images/icon1.png</file>
-    <file>images/icon2.png</file>
+    <file>images/attached.png</file>
+    <file>images/detached.png</file>
+    <file>images/error.png</file>
+    <file>images/finished.png</file>
+    <file>images/icon.png</file>
+    <file>images/new.png</file>
   </qresource>
 </RCC>

@@ -31,35 +31,38 @@ class ProcessWatchDog;
 
 class Process
 {
-	public:
-		enum State {DETACHED, ATTACHED, FINISHED, UNKNOWN};
-		Process(int _id, State _state);
+public:
+	enum State
+	{
+		DETACHED, ATTACHED, FINISHED, FAILED_ATTACH, FAILED_WAIT
+	};
+	Process(int _id, State _state);
 
-		ProcessWatchDog* watchdog;
-		State 			 state;
-		int   			 id;
+	ProcessWatchDog* watchdog;
+	State state;
+	int id;
 };
 
 class Model
 {
-	public:
-		Model();
-		virtual ~Model();
+public:
+	Model();
+	virtual ~Model();
 
-		void processStateChanged(Process* _proc);
-		void detachFromProcess(Process* _proc);
-		void attachToProcess(Process* _proc);
+	void processStateChanged(Process* _proc);
+	void detachFromProcess(Process* _proc);
+	void attachToProcess(Process* _proc);
 
-		Process* addNewProcess(int _id);
-		Process* getProcess(int _id);
+	Process* addNewProcess(int _id);
+	Process* getProcess(int _id);
 
-		void attachView(AbstractProcessView* _view);
-		void detachView(AbstractProcessView* _view);
-		void shutdown();
+	void attachView(AbstractProcessView* _view);
+	void detachView(AbstractProcessView* _view);
+	void shutdown();
 
-	private:
-		QList<AbstractProcessView*> views;
-		QList<Process*> procs;
+private:
+	QList<AbstractProcessView*> views;
+	QList<Process*> procs;
 };
 
 #endif /* MODEL_H_ */

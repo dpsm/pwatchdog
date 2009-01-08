@@ -15,14 +15,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#include "ProcessHandler.h"
+#include <windows.h>
 
-#include "View.h"
-
-int main(int argc, char **argv)
+void ProcessHandler::handleProcess(Process* proc, Model* model)
 {
-	QApplication app(argc, argv);
-	MainWindow window;
-	window.show();
-	return app.exec();
+	HANDLE process = OpenProcess(SYNCHRONIZE, FALSE, proc->id);
+	if (process != NULL)
+	{
+		proc->state = Process::ATTACHED;
+		model->processStateChanged(proc);
+		if (WaitForSingleObject(process, INFINITE) != WAIT_FAILED)
+		{
+			proc->state = Process::FINISHED;
+			model->processStateChanged(proc);
+		}
+		else
+		{
+			proc->state = Process::FAILED_WAIT;
+			model->processStateChanged(proc);
+		}
+		CloseHandle(process);
+	}
+	else
+	{
+		proc->state = Process::FAILED_ATTACH;
+		model->processStateChanged(proc);
+	}
 }
-

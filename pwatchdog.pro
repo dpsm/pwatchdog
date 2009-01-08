@@ -8,8 +8,7 @@ HEADERS += ProcessHandler.h \
     View.h \
     Model.h \
     ProcessWatchDog.h
-SOURCES += ProcessHandler.cpp \
-    PWatchdogEvents.cpp \
+SOURCES += PWatchdogEvents.cpp \
     ProcessWatchDog.cpp \
     main.cpp \
     Model.cpp \
@@ -17,4 +16,5 @@ SOURCES += ProcessHandler.cpp \
 FORMS += pwatchdog.ui
 RESOURCES += pwatchdog.qrc
 CONFIG += thread
-win32:SOURCES += 
+win32:SOURCES += Win32ProcessHandler.cpp
+unix:SOURCES += UnixProcessHandler.cpp

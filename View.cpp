@@ -27,14 +27,10 @@ MainWindow::MainWindow() :
 	QValidator* validator = new QIntValidator(0, 99999, this);
 	this->ui.procIdText->setValidator(validator);
 
-	QObject::connect(this->ui.detachButton, SIGNAL(released())
-			, this, SLOT(detachFromProcess()));
-	QObject::connect(this->ui.attachButton, SIGNAL(released())
-			, this, SLOT(attachToProcess()));
-	QObject::connect(this->ui.newButton, SIGNAL(released())
-			, this, SLOT(addNewProcess()));
-	QObject::connect(this->ui.procListWidget, SIGNAL(itemSelectionChanged())
-				, this, SLOT(currentProcessChanged()));
+	QObject::connect(this->ui.detachButton, SIGNAL(released()), this, SLOT(detachFromProcess()));
+	QObject::connect(this->ui.attachButton, SIGNAL(released()), this, SLOT(attachToProcess()));
+	QObject::connect(this->ui.newButton, SIGNAL(released()), this, SLOT(addNewProcess()));
+	QObject::connect(this->ui.procListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(currentProcessChanged()));
 }
 
 MainWindow::~MainWindow()
@@ -55,7 +51,7 @@ void MainWindow::detachFromProcess()
 		QListWidgetItem* item = selected.first();
 		int id = item->text().toInt();
 		Process* process = this->model.getProcess(id);
-		if(process != NULL && process->state != Process::DETACHED)
+		if (process != NULL && process->state != Process::DETACHED)
 		{
 			this->model.detachFromProcess(process);
 		}
@@ -70,7 +66,7 @@ void MainWindow::attachToProcess()
 		QListWidgetItem* item = selected.first();
 		int id = item->text().toInt();
 		Process* process = this->model.getProcess(id);
-		if(process != NULL && process->state != Process::ATTACHED)
+		if (process != NULL && process->state != Process::ATTACHED)
 		{
 			this->model.attachToProcess(process);
 		}
@@ -80,10 +76,10 @@ void MainWindow::attachToProcess()
 void MainWindow::addNewProcess()
 {
 	QString text = this->ui.procIdText->text();
-	if(text.length() > 0x00 && !isProcessRegistered(text))
+	if (text.length() > 0x00 && !isProcessRegistered(text))
 	{
 		Process* process = this->model.addNewProcess(text.toInt());
-		if(process != NULL)
+		if (process != NULL)
 		{
 			this->ui.procListWidget->addItem(QString::number(process->id));
 		}
@@ -93,12 +89,14 @@ void MainWindow::addNewProcess()
 bool MainWindow::isProcessRegistered(QString text)
 {
 	int index = 0x00;
-	int size  = 0x00;
+	int size = 0x00;
 
 	size = this->ui.procListWidget->count();
-	for (index = 0; index < size; ++index) {
+	for (index = 0; index < size; ++index)
+	{
 		QListWidgetItem* item = this->ui.procListWidget->item(index);
-		if (item->text() == text) {
+		if (item->text() == text)
+		{
 			return true;
 		}
 	}
@@ -108,16 +106,18 @@ bool MainWindow::isProcessRegistered(QString text)
 bool MainWindow::event(QEvent* _event)
 {
 	QEvent::Type type = _event->type();
-	if(type == QEvent::Type(ProcessChangedEvent::PROCESS_CHANGED_EVENT))
+	if (type == ProcessChangedEvent::PROCESS_CHANGED_EVENT)
 	{
-		ProcessChangedEvent* procEvent = static_cast<ProcessChangedEvent*>(_event);
+		ProcessChangedEvent* procEvent =
+				static_cast<ProcessChangedEvent*> (_event);
 		this->processStateChanged(procEvent);
-	} else
-	if (type == QEvent::Type(ShutDownEvent::SHUTDOWN_EVENT))
+	}
+	else if (type == ShutDownEvent::SHUTDOWN_EVENT)
 	{
-		ShutDownEvent* procEvent = static_cast<ShutDownEvent*>(_event);
+		ShutDownEvent* procEvent = static_cast<ShutDownEvent*> (_event);
 		this->shutdown(procEvent);
-	} else
+	}
+	else
 	{
 		return AbstractProcessView::event(_event);
 	}
@@ -134,17 +134,18 @@ void MainWindow::processStateChanged(ProcessChangedEvent* _event)
 	title.append("] State = ");
 	switch (process->state)
 	{
-		case Process::DETACHED:
-			title.append("DETACHED");
+	case Process::DETACHED:
+		title.append("DETACHED");
 		break;
-		case Process::ATTACHED:
-			title.append("ATTACHED");
+	case Process::ATTACHED:
+		title.append("ATTACHED");
 		break;
-		case Process::FINISHED:
-			title.append("FINISHED");
+	case Process::FINISHED:
+		title.append("FINISHED");
 		break;
-		case Process::UNKNOWN:
-			title.append("ERROR");
+	case Process::FAILED_ATTACH:
+	case Process::FAILED_WAIT:
+		title.append("ERROR");
 		break;
 	}
 	this->setWindowTitle(title);
