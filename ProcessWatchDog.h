@@ -31,9 +31,14 @@ public:
 	ProcessWatchDog(Model* _model, Process* _proc);
 	virtual ~ProcessWatchDog();
 
-	inline Process* getProcess()
+	Process* getProcess()
 	{
 		return this->proc;
+	}
+
+	Model* getModel()
+	{
+		return this->model;
 	}
 
 	void stop();

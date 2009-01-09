@@ -32,7 +32,7 @@ ProcessWatchDog::~ProcessWatchDog()
 
 void ProcessWatchDog::run()
 {
-	ProcessHandler::handleProcess(this->proc, this->model);
+	ProcessHandler::handleProcess(this);
 }
 
 void ProcessWatchDog::stop()

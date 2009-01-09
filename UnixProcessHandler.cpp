@@ -17,8 +17,16 @@
  */
 #include "ProcessHandler.h"
 
-void ProcessHandler::handleProcess(Process* proc, Model* model)
+void ProcessHandler::handleProcess(ProcessWatchDog* watchdog)
 {
-	proc->state = Process::FAILED_ATTACH;
+	Process* proc  = watchdog->getProcess();
+	Model* 	 model = watchdog->getModel();
+
+	proc->state = Process::ATTACHED;
+	model->processStateChanged(proc);
+
+	watchdog->sleep(5);
+
+	proc->state = Process::FAILED_WAIT;
 	model->processStateChanged(proc);
 }

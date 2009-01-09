@@ -18,8 +18,11 @@
 #include "ProcessHandler.h"
 #include <windows.h>
 
-void ProcessHandler::handleProcess(Process* proc, Model* model)
+void ProcessHandler::handleProcess(ProcessWatchDog* watchdog)
 {
+	Process* proc  = watchdog->getProcess();
+	Model* 	 model = watchdog->getModel();
+
 	HANDLE process = OpenProcess(SYNCHRONIZE, FALSE, proc->id);
 	if (process != NULL)
 	{

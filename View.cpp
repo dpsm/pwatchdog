@@ -19,7 +19,7 @@
 #include "View.h"
 
 MainWindow::MainWindow() :
-	AbstractProcessView(NULL, Qt::Window | Qt::WindowMinimizeButtonHint)
+	AbstractProcessView(NULL, Qt::Window | Qt::WindowMinimizeButtonHint | Qt::WindowTitleHint)
 {
 	model.attachView(this);
 	this->ui.setupUi(this);

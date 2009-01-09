@@ -18,15 +18,13 @@
 #ifndef PROCESSHANDLER_H_
 #define PROCESSHANDLER_H_
 
-#include "Model.h"
+#include "ProcessWatchDog.h"
 
-class Process;
-class Model;
-
+class ProcessWatchDog;
 class ProcessHandler
 {
 public:
-	static void handleProcess(Process* process, Model* model);
+	static void handleProcess(ProcessWatchDog* watchdog);
 };
 
 #endif /* PROCESSHANDLER_H_ */

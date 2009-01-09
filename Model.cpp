@@ -56,18 +56,18 @@ void Model::processStateChanged(Process* _proc)
 		QApplication::instance()->postEvent(view, event);
 	}
 
-	if (_proc->state == Process::FINISHED) {
-		bool shutdown = true;
-		QListIterator<Process*> procsIterator(this->procs);
-		while (procsIterator.hasNext())
-		{
-			shutdown &= procsIterator.next()->state == Process::FINISHED;
-		}
+	bool shutdown = true;
+	QListIterator<Process*> procsIterator(this->procs);
+	while (procsIterator.hasNext())
+	{
+		Process* process = procsIterator.next();
+		shutdown &= process->state == Process::FINISHED
+				 || process->state == Process::DETACHED;
+	}
 
-		if (shutdown)
-		{
-			this->shutdown();
-		}
+	if (shutdown)
+	{
+		this->shutdown();
 	}
 }
 

@@ -23,7 +23,7 @@
 #include <qlist.h>
 
 #include "AbstractProcessView.h"
-#include "PWatchDogEvents.h"
+#include "PWatchdogEvents.h"
 #include "ProcessWatchDog.h"
 #include "ProcessHandler.h"
 

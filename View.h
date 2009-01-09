@@ -22,7 +22,7 @@
 
 #include "AbstractProcessView.h"
 #include "PWatchdogEvents.h"
-#include "Ui_pwatchdog.h"
+#include "ui_pwatchdog.h"
 #include "Model.h"
 
 #ifndef VIEW_H_
