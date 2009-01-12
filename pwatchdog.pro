@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = pwatchdog
 QT += core \
     gui
-HEADERS += ProcessHandler.h \
+HEADERS += Utils.h \
     AbstractProcessView.h \
     PWatchdogEvents.h \
     View.h \
@@ -16,5 +16,9 @@ SOURCES += PWatchdogEvents.cpp \
 FORMS += pwatchdog.ui
 RESOURCES += pwatchdog.qrc
 CONFIG += thread
-win32:SOURCES += Win32ProcessHandler.cpp
-unix:SOURCES += UnixProcessHandler.cpp
+win32 { 
+    SOURCES += Win32PowerManager.cpp \
+        Win32Utils.cpp
+    HEADERS += Win32PowerManager.h
+}
+unix:SOURCES += UnixUtils.cpp

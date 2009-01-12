@@ -15,30 +15,43 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "ProcessHandler.h"
-#include <stdlib.h>
+#include <windows.h>
 
-void ProcessHandler::handleProcess(ProcessWatchDog* watchdog)
+#include "Win32PowerManager.h"
+#include "Utils.h"
+
+void Utils::waitProcess(ProcessWatchDog* watchdog)
 {
 	Process* proc  = watchdog->getProcess();
 	Model* 	 model = watchdog->getModel();
 
-	proc->state = Process::ATTACHED;
-	model->processStateChanged(proc);
-
-	QString command = QString(" bash -c \"while ps -p %1 > /dev/null; do sleep 1; done\"")
-		.arg(QString::number(proc->id));
-	
-	const char* cmd = command.toAscii();
-	int exit = system(cmd);
-	if (exit >= 0)
+	HANDLE process = OpenProcess(SYNCHRONIZE, FALSE, proc->id);
+	if (process != NULL)
 	{
-		proc->state = Process::FINISHED;
-		model->processStateChanged(proc);	
+		proc->state = Process::ATTACHED;
+		model->processStateChanged(proc);
+		if (WaitForSingleObject(process, INFINITE) != WAIT_FAILED)
+		{
+			proc->state = Process::FINISHED;
+			model->processStateChanged(proc);
+		}
+		else
+		{
+			proc->state = Process::FAILED_WAIT;
+			model->processStateChanged(proc);
+		}
+		CloseHandle(process);
 	}
 	else
 	{
-		proc->state = Process::FAILED_WAIT;
+		proc->state = Process::FAILED_ATTACH;
 		model->processStateChanged(proc);
 	}
 }
+
+void Utils::shutDown()
+{
+	Win32PowerManager::Shutdown();
+}
+
+

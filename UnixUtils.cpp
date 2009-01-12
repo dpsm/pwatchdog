@@ -15,16 +15,36 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#ifndef PROCESSHANDLER_H_
-#define PROCESSHANDLER_H_
+#include "Utils.h"
+#include <stdlib.h>
 
-#include "ProcessWatchDog.h"
-
-class ProcessWatchDog;
-class ProcessHandler
+void Utils::waitProcess(ProcessWatchDog* watchdog)
 {
-public:
-	static void handleProcess(ProcessWatchDog* watchdog);
-};
+	Process* proc  = watchdog->getProcess();
+	Model* 	 model = watchdog->getModel();
 
-#endif /* PROCESSHANDLER_H_ */
+	proc->state = Process::ATTACHED;
+	model->processStateChanged(proc);
+
+	QString command = QString(" bash -c \"while ps -p %1 > /dev/null; do sleep 1; done\"")
+		.arg(QString::number(proc->id));
+
+	const char* cmd = command.toAscii();
+	int exit = system(cmd);
+	if (exit >= 0)
+	{
+		proc->state = Process::FINISHED;
+		model->processStateChanged(proc);
+	}
+	else
+	{
+		proc->state = Process::FAILED_WAIT;
+		model->processStateChanged(proc);
+	}
+}
+
+void Utils::shutDown()
+{
+
+}
+

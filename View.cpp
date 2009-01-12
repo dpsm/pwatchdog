@@ -118,6 +118,7 @@ void MainWindow::addNewProcess()
 		{
 			this->ui.procListWidget->addItem(QString::number(process->id));
 		}
+		this->ui.procIdText->clear();
 	}
 }
 

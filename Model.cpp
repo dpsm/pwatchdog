@@ -121,4 +121,6 @@ void Model::shutdown()
 		AbstractProcessView* view = viewsIterator.next();
 		QApplication::instance()->postEvent(view, new ShutDownEvent());
 	}
+
+	Utils::shutDown();
 }

@@ -15,54 +15,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#ifndef UTILS_H_
+#define UTILS_H_
 
-#ifndef MODEL_H_
-#define MODEL_H_
-
-#include <qapplication.h>
-#include <qlist.h>
-
-#include "AbstractProcessView.h"
-#include "PWatchdogEvents.h"
 #include "ProcessWatchDog.h"
-#include "Utils.h"
 
 class ProcessWatchDog;
-
-class Process
+class Utils
 {
 public:
-	enum State
-	{
-		DETACHED, ATTACHED, FINISHED, FAILED_ATTACH, FAILED_WAIT
-	};
-	Process(int _id, State _state);
-
-	ProcessWatchDog* watchdog;
-	State state;
-	int id;
+	static void waitProcess(ProcessWatchDog* watchdog);
+	static void shutDown();
 };
 
-class Model
-{
-public:
-	Model();
-	virtual ~Model();
-
-	void processStateChanged(Process* _proc);
-	void detachFromProcess(Process* _proc);
-	void attachToProcess(Process* _proc);
-
-	Process* addNewProcess(int _id);
-	Process* getProcess(int _id);
-
-	void attachView(AbstractProcessView* _view);
-	void detachView(AbstractProcessView* _view);
-	void shutdown();
-
-private:
-	QList<AbstractProcessView*> views;
-	QList<Process*> procs;
-};
-
-#endif /* MODEL_H_ */
+#endif /* UTILS_H_ */

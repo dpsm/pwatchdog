@@ -4,3 +4,4 @@ debug/*
 
 Makefile*
 ui_*
+*.o

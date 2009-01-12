@@ -15,34 +15,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "ProcessHandler.h"
+#ifndef CLOGOFF_H_
+#define CLOGOFF_H_
+
 #include <windows.h>
 
-void ProcessHandler::handleProcess(ProcessWatchDog* watchdog)
+class Win32PowerManager
 {
-	Process* proc  = watchdog->getProcess();
-	Model* 	 model = watchdog->getModel();
 
-	HANDLE process = OpenProcess(SYNCHRONIZE, FALSE, proc->id);
-	if (process != NULL)
-	{
-		proc->state = Process::ATTACHED;
-		model->processStateChanged(proc);
-		if (WaitForSingleObject(process, INFINITE) != WAIT_FAILED)
-		{
-			proc->state = Process::FINISHED;
-			model->processStateChanged(proc);
-		}
-		else
-		{
-			proc->state = Process::FAILED_WAIT;
-			model->processStateChanged(proc);
-		}
-		CloseHandle(process);
-	}
-	else
-	{
-		proc->state = Process::FAILED_ATTACH;
-		model->processStateChanged(proc);
-	}
-}
+public:
+
+	static void Logoff(void);
+	static void Poweroff(void);
+	static void Restart(void);
+	static void Shutdown(void);
+
+private:
+
+	static bool relized;
+	static bool isWinNT;
+
+	static void EnableShutdownPrivileges(void);
+	static void DisableShutdownPrivileges(void);
+	static void realizeWin32Version();
+
+};
+#endif /* CLOGOFF_H_ */

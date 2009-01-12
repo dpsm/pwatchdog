@@ -18,7 +18,7 @@
 
 #include <qthread.h>
 #include "ProcessWatchDog.h"
-#include "ProcessHandler.h"
+#include "Utils.h"
 
 ProcessWatchDog::ProcessWatchDog(Model* _model, Process* _proc) :
 	model(_model), proc(_proc)
@@ -32,7 +32,7 @@ ProcessWatchDog::~ProcessWatchDog()
 
 void ProcessWatchDog::run()
 {
-	ProcessHandler::handleProcess(this);
+	Utils::waitProcess(this);
 }
 
 void ProcessWatchDog::stop()
