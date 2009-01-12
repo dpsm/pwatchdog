@@ -16,6 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#ifndef VIEW_H_
+#define VIEW_H_
+
 #include <qglobal.h>
 #include <qstring.h>
 #include <qvalidator.h>
@@ -24,10 +27,7 @@
 #include "PWatchdogEvents.h"
 #include "ui_pwatchdog.h"
 #include "Model.h"
-
-#ifndef VIEW_H_
-#define VIEW_H_
-
+ 
 class MainWindow: public AbstractProcessView
 {
 Q_OBJECT
