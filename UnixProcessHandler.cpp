@@ -16,6 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "ProcessHandler.h"
+#include <stdlib.h>
 
 void ProcessHandler::handleProcess(ProcessWatchDog* watchdog)
 {
@@ -25,8 +26,19 @@ void ProcessHandler::handleProcess(ProcessWatchDog* watchdog)
 	proc->state = Process::ATTACHED;
 	model->processStateChanged(proc);
 
-	watchdog->sleep(5);
-
-	proc->state = Process::FAILED_WAIT;
-	model->processStateChanged(proc);
+	QString command = QString(" bash -c \"while ps -p %1 > /dev/null; do sleep 1; done\"")
+		.arg(QString::number(proc->id));
+	
+	const char* cmd = command.toAscii();
+	int exit = system(cmd);
+	if (exit >= 0)
+	{
+		proc->state = Process::FINISHED;
+		model->processStateChanged(proc);	
+	}
+	else
+	{
+		proc->state = Process::FAILED_WAIT;
+		model->processStateChanged(proc);
+	}
 }

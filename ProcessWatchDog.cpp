@@ -43,3 +43,8 @@ void ProcessWatchDog::stop()
 	this->proc->state = Process::DETACHED;
 	model->processStateChanged(this->proc);
 }
+
+void ProcessWatchDog::sleep(long unsigned int _interval)
+{
+	QThread::sleep(_interval);
+}

@@ -41,6 +41,7 @@ public:
 		return this->model;
 	}
 
+	void sleep(long unsigned int _interval);
 	void stop();
 	void run();
 private:
