@@ -15,8 +15,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include "Utils.h"
+#include <iostream>
 #include <stdlib.h>
+
+#include "Utils.h"
+
+using std::cerr;
+using std::endl;
 
 void Utils::waitProcess(ProcessWatchDog* watchdog)
 {
@@ -26,7 +31,7 @@ void Utils::waitProcess(ProcessWatchDog* watchdog)
 	proc->state = Process::ATTACHED;
 	model->processStateChanged(proc);
 
-	QString command = QString(" bash -c \"while ps -p %1 > /dev/null; do sleep 1; done\"")
+	QString command = QString("bash -c \"while ps -p %1 > /dev/null; do sleep 1; done\"")
 		.arg(QString::number(proc->id));
 
 	const char* cmd = command.toAscii();
@@ -45,6 +50,11 @@ void Utils::waitProcess(ProcessWatchDog* watchdog)
 
 void Utils::shutDown()
 {
-
+	const char* cmd = "bash -c \"sudo shutdown -h +1\"";
+	int exit = system(cmd);
+	if (exit < 0)
+	{
+		cerr << "Unable to shutdown machine. Exit code " << exit << "." << endl;	
+	}
 }
 

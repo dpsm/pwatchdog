@@ -163,27 +163,6 @@ bool MainWindow::event(QEvent* _event)
 void MainWindow::processStateChanged(ProcessChangedEvent* _event)
 {
 	Process* process = _event->getSource();
-
-	QString title("Process [%1]; State [%2].");
-	QString state;
-	title = title.arg(QString::number(process->id));
-	switch (process->state)
-	{
-	case Process::DETACHED:
-		state = "DETACHED";
-		break;
-	case Process::ATTACHED:
-		state = "ATTACHED";
-		break;
-	case Process::FINISHED:
-		state = "FINISHED";
-		break;
-	case Process::FAILED_ATTACH:
-	case Process::FAILED_WAIT:
-		state = "ERROR";
-		break;
-	}
-	this->setWindowTitle(title.arg(state));
 	this->updateProcessStatusIcon(process);
 }
 
