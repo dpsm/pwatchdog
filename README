@@ -5,3 +5,16 @@ SO WHEN ALL PROCESSES HAVE ENDED EXECUTION IT KILLS
 THE MACHINE. THIS APPLICATION HAS EMERGED FRO USERS
 NEEDS TO SHUT DOWN THEIR COMPUTER AFTER A LONG PROCESS
 EXECUTION AUTOMATICALY.
+
+#### INSTALLATION ####
+
+# WINDOWS
+	1 - NA.
+
+# UNIX
+	1 - Add /etc/sudoers file the following line:
+	<user> localhost=NOPASSWD: /sbin/shutdown
+	Replace <user> by the pwatchdog program owner
+	
+	2 - Set user or group ID on execution:
+	sudo chmod u+s /sbin/shutdown
