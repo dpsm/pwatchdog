@@ -145,12 +145,12 @@ bool MainWindow::event(QEvent* _event)
 	if (type == ProcessChangedEvent::PROCESS_CHANGED_EVENT)
 	{
 		ProcessChangedEvent* procEvent =
-				static_cast<ProcessChangedEvent*> (_event);
+				dynamic_cast<ProcessChangedEvent*> (_event);
 		this->processStateChanged(procEvent);
 	}
 	else if (type == ShutDownEvent::SHUTDOWN_EVENT)
 	{
-		ShutDownEvent* procEvent = static_cast<ShutDownEvent*> (_event);
+		ShutDownEvent* procEvent = dynamic_cast<ShutDownEvent*> (_event);
 		this->shutdown(procEvent);
 	}
 	else
