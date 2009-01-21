@@ -20,5 +20,6 @@ win32 {
     SOURCES += Win32PowerManager.cpp \
         Win32Utils.cpp
     HEADERS += Win32PowerManager.h
+	RC_FILE = pwatchdog.rc
 }
 unix:SOURCES += UnixUtils.cpp
