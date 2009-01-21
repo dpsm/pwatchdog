@@ -24,12 +24,13 @@ MainWindow::MainWindow() :
 	model.attachView(this);
 	this->ui.setupUi(this);
 
+	this->ui.procListWidget->setMouseTracking(true);
+
 	QValidator* validator = new QIntValidator(0, 99999, this);
 	this->ui.procIdText->setValidator(validator);
 
-	QObject::connect(this->ui.detachButton, SIGNAL(released()), this, SLOT(detachFromProcess()));
-	QObject::connect(this->ui.attachButton, SIGNAL(released()), this, SLOT(attachToProcess()));
-	QObject::connect(this->ui.newButton, SIGNAL(released()), this, SLOT(addNewProcess()));
+	QObject::connect(this->ui.addButton, SIGNAL(released()), this, SLOT(addNewProcess()));
+	QObject::connect(this->ui.remButton, SIGNAL(released()), this, SLOT(removeProcess()));
 	QObject::connect(this->ui.procListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(currentProcessChanged()));
 }
 
@@ -40,10 +41,16 @@ MainWindow::~MainWindow()
 void MainWindow::currentProcessChanged()
 {
 	QListWidgetItem* item = this->ui.procListWidget->currentItem();
+	if (item == NULL)
+		return;
 	this->ui.procIdText->setText(item->text());
 
 	Process* process = this->model.getProcess(item->text().toInt());
 	if (process != NULL) {
+		if(strlen(process->name) == 0x00)
+			this->setWindowTitle(QApplication::translate("window", "Process Watch Dog", 0, QApplication::UnicodeUTF8));
+		else
+			this->setWindowTitle(QString("Application: [%1]").arg(process->name));
 		updateProcessStatusIcon(process);
 	}
 }
@@ -78,7 +85,7 @@ void MainWindow::updateProcessStatusIcon(Process* _proc)
 	this->ui.toolButton->setToolTip(tooltip);
 }
 
-void MainWindow::detachFromProcess()
+void MainWindow::removeProcess()
 {
 	QList<QListWidgetItem*> selected = this->ui.procListWidget->selectedItems();
 	if (selected.size() > 0)
@@ -90,22 +97,13 @@ void MainWindow::detachFromProcess()
 		{
 			this->model.detachFromProcess(process);
 		}
+		int row = this->ui.procListWidget->row(item);
+		delete this->ui.procListWidget->takeItem(row);
 	}
-}
-
-void MainWindow::attachToProcess()
-{
-	QList<QListWidgetItem*> selected = this->ui.procListWidget->selectedItems();
-	if (selected.size() > 0)
-	{
-		QListWidgetItem* item = selected.first();
-		int id = item->text().toInt();
-		Process* process = this->model.getProcess(id);
-		if (process != NULL && process->state != Process::ATTACHED)
-		{
-			this->model.attachToProcess(process);
-		}
-	}
+	this->ui.toolButton->setIcon(QIcon());
+	this->ui.toolButton->setIconSize(QSize(80, 80));
+	this->ui.toolButton->setToolTip("");
+	this->ui.procIdText->clear();
 }
 
 void MainWindow::addNewProcess()
@@ -117,6 +115,7 @@ void MainWindow::addNewProcess()
 		if (process != NULL)
 		{
 			this->ui.procListWidget->addItem(QString::number(process->id));
+			this->model.attachToProcess(process);
 		}
 		this->ui.procIdText->clear();
 	}
@@ -163,7 +162,9 @@ bool MainWindow::event(QEvent* _event)
 void MainWindow::processStateChanged(ProcessChangedEvent* _event)
 {
 	Process* process = _event->getSource();
-	this->updateProcessStatusIcon(process);
+	if (isProcessRegistered(QString::number(process->id, 10))) {
+		this->updateProcessStatusIcon(process);
+	}
 }
 
 void MainWindow::shutdown(ShutDownEvent* _event)

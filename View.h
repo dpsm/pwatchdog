@@ -27,7 +27,7 @@
 #include "PWatchdogEvents.h"
 #include "ui_pwatchdog.h"
 #include "Model.h"
- 
+
 class MainWindow: public AbstractProcessView
 {
 Q_OBJECT
@@ -40,9 +40,8 @@ public:
 
 private slots:
 	void currentProcessChanged();
-	void detachFromProcess();
-	void attachToProcess();
 	void addNewProcess();
+	void removeProcess();
 
 private:
 	void processStateChanged(ProcessChangedEvent* _event);

@@ -16,6 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include <windows.h>
+#include <stdlib.h>
+#include <Psapi.h>
 
 #include "Win32PowerManager.h"
 #include "Utils.h"
@@ -25,9 +27,13 @@ void Utils::waitProcess(ProcessWatchDog* watchdog)
 	Process* proc  = watchdog->getProcess();
 	Model* 	 model = watchdog->getModel();
 
-	HANDLE process = OpenProcess(SYNCHRONIZE, FALSE, proc->id);
+	HANDLE process = OpenProcess(SYNCHRONIZE | PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, proc->id);
 	if (process != NULL)
 	{
+		WCHAR buffer[Process::MAX_PROCESS_NAME_LENGTH];
+		GetModuleFileNameEx(process, NULL, buffer, Process::MAX_PROCESS_NAME_LENGTH);
+		wcstombs(proc->name, buffer, Process::MAX_PROCESS_NAME_LENGTH);
+
 		proc->state = Process::ATTACHED;
 		model->processStateChanged(proc);
 		if (WaitForSingleObject(process, INFINITE) != WAIT_FAILED)

@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="images" >
+    <file>images/remove.png</file>
     <file>images/attached.png</file>
     <file>images/detached.png</file>
     <file>images/error.png</file>

@@ -17,9 +17,25 @@
  */
 #include "Model.h"
 
+unsigned int Process::MAX_PROCESS_NAME_LENGTH = 100;
+
 Process::Process(int _id, State _state) :
 	id(_id), state(_state), watchdog(NULL)
 {
+	this->name = NULL;
+	int size = Process::MAX_PROCESS_NAME_LENGTH * sizeof(char);
+	this->name = (char*)malloc(size);
+	if (this->name)
+		memset(this->name, 0x00, size);
+}
+
+Process::~Process()
+{
+	if (this->name)
+	{
+		free(this->name);
+		this->name = NULL;
+	}
 }
 
 Model::Model()
@@ -73,7 +89,7 @@ void Model::processStateChanged(Process* _proc)
 
 void Model::detachFromProcess(Process* _proc)
 {
-	if (_proc->watchdog != NULL)
+	if (_proc->watchdog != NULL && _proc->state == Process::ATTACHED)
 	{
 		_proc->watchdog->stop();
 	}
@@ -122,5 +138,5 @@ void Model::shutdown()
 		QApplication::instance()->postEvent(view, new ShutDownEvent());
 	}
 
-	Utils::shutDown();
+        Utils::shutDown();
 }

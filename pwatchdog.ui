@@ -97,7 +97,7 @@
     <property name="title" >
      <string>Current Process</string>
     </property>
-    <widget class="QToolButton" name="newButton" >
+    <widget class="QToolButton" name="addButton" >
      <property name="geometry" >
       <rect>
        <x>120</x>
@@ -133,7 +133,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QToolButton" name="attachButton" >
+    <widget class="QToolButton" name="remButton" >
      <property name="geometry" >
       <rect>
        <x>160</x>
@@ -150,7 +150,7 @@
      </property>
      <property name="icon" >
       <iconset resource="pwatchdog.qrc" >
-       <normaloff>:/images/images/attached.png</normaloff>:/images/images/attached.png</iconset>
+       <normaloff>:/images/images/remove.png</normaloff>:/images/images/remove.png</iconset>
      </property>
      <property name="iconSize" >
       <size>
@@ -181,38 +181,12 @@
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
-    <widget class="QToolButton" name="detachButton" >
-     <property name="geometry" >
-      <rect>
-       <x>200</x>
-       <y>60</y>
-       <width>31</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="toolTip" >
-      <string>Detach Process</string>
-     </property>
-     <property name="text" >
-      <string>...</string>
-     </property>
-     <property name="icon" >
-      <iconset resource="pwatchdog.qrc" >
-       <normaloff>:/images/images/detached.png</normaloff>:/images/images/detached.png</iconset>
-     </property>
-     <property name="iconSize" >
-      <size>
-       <width>30</width>
-       <height>30</height>
-      </size>
-     </property>
-    </widget>
     <widget class="QGroupBox" name="groupBox_3" >
      <property name="geometry" >
       <rect>
-       <x>120</x>
+       <x>30</x>
        <y>100</y>
-       <width>111</width>
+       <width>201</width>
        <height>121</height>
       </rect>
      </property>
@@ -244,6 +218,13 @@
       </item>
      </layout>
     </widget>
+    <zorder>addButton</zorder>
+    <zorder>procIdText</zorder>
+    <zorder>remButton</zorder>
+    <zorder>label_4</zorder>
+    <zorder>detachButton</zorder>
+    <zorder>groupBox_3</zorder>
+    <zorder>toolButton</zorder>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar" >

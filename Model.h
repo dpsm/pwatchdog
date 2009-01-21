@@ -32,14 +32,17 @@ class ProcessWatchDog;
 class Process
 {
 public:
+	static unsigned int MAX_PROCESS_NAME_LENGTH;
+
 	enum State
 	{
 		DETACHED, ATTACHED, FINISHED, FAILED_ATTACH, FAILED_WAIT
 	};
 	Process(int _id, State _state);
-
+	~Process();
 	ProcessWatchDog* watchdog;
 	State state;
+	char* name;
 	int id;
 };
 
