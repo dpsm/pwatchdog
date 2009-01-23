@@ -19,30 +19,77 @@
 #define PWATCHDOGEVENTS_H_
 
 #include <qevent.h>
-#include "Model.h"
 
 class Process;
-class ProcessChangedEvent: public QEvent
+class ProcessEvent : public QEvent
 {
-public:
-	static QEvent::Type PROCESS_CHANGED_EVENT;
+  public:
 
-	ProcessChangedEvent(Process* _proc);
-	inline Process* getSource()
-	{
-		return this->proc;
-	}
-	;
+    ProcessEvent(Process* _process, QEvent::Type _type)
+    : QEvent(_type), process(_process)
+    {
+    }
 
-private:
-	Process* proc;
+    virtual ~ProcessEvent()
+    {
+      this->process = NULL;
+    };
+
+    inline Process* getSource()
+    {
+      return this->process;
+    };
+
+  protected:
+
+    Process* process;
 };
 
-class ShutDownEvent: public QEvent
+class ProcessAddedEvent : public ProcessEvent
+{
+  public:
+
+    static QEvent::Type PROCESS_ADDED_EVENT;
+
+    ProcessAddedEvent(Process* _process) :
+      ProcessEvent(_process, PROCESS_ADDED_EVENT)
+    {
+    }
+};
+
+class ProcessRemovedEvent : public ProcessEvent
+{
+  public:
+
+    static QEvent::Type PROCESS_REMOVED_EVENT;
+
+    ProcessRemovedEvent(Process* _process) :
+      ProcessEvent(_process, PROCESS_REMOVED_EVENT)
+    {
+    }
+};
+
+class ProcessChangedEvent : public ProcessEvent
+{
+  public:
+
+    static QEvent::Type PROCESS_CHANGED_EVENT;
+
+    ProcessChangedEvent(Process* _process) :
+      ProcessEvent(_process, PROCESS_CHANGED_EVENT)
+    {
+    }
+};
+
+class ShutDownEvent : public QEvent
 {
 public:
-	static QEvent::Type SHUTDOWN_EVENT;
-	ShutDownEvent();
+  static QEvent::Type SHUTDOWN_EVENT;
+
+  ShutDownEvent() : QEvent(SHUTDOWN_EVENT)
+  {
+
+  }
 };
 
 #endif /* PWATCHDOGEVENTS_H_ */

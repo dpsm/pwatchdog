@@ -19,124 +19,139 @@
 
 unsigned int Process::MAX_PROCESS_NAME_LENGTH = 100;
 
-Process::Process(int _id, State _state) :
-	id(_id), state(_state), watchdog(NULL)
+Process::Process(int _id, State _state)
 {
-	this->name = NULL;
-	int size = Process::MAX_PROCESS_NAME_LENGTH * sizeof(char);
-	this->name = (char*)malloc(size);
-	if (this->name)
-		memset(this->name, 0x00, size);
+  this->watchdog = NULL;
+  this->state    = _state;
+  this->name     = NULL;
+  this->id       = _id;
+
+  int size = Process::MAX_PROCESS_NAME_LENGTH * sizeof(char);
+  this->name = (char*) malloc(size);
+  if (this->name)
+  {
+    memset(this->name, 0x00, size);
+  }
 }
 
 Process::~Process()
 {
-	if (this->name)
-	{
-		free(this->name);
-		this->name = NULL;
-	}
-}
-
-Model::Model()
-{
-}
-
-Model::~Model()
-{
+  if (this->name)
+  {
+    free(this->name);
+    this->watchdog = NULL;
+    this->name     = NULL;
+  }
 }
 
 void Model::attachView(AbstractProcessView* view)
 {
-	if (!this->views.contains(view))
-	{
-		this->views.append(view);
-	}
+  if (!this->views.contains(view))
+  {
+    this->views.append(view);
+  }
 }
 
 void Model::detachView(AbstractProcessView* view)
 {
-	if (this->views.contains(view))
-	{
-		this->views.removeAll(view);
-	}
+  if (this->views.contains(view))
+  {
+    this->views.removeAll(view);
+  }
 }
 
-void Model::processStateChanged(Process* _proc)
+void Model::SendViews(Process* process, QEvent::Type type)
 {
-	QListIterator<AbstractProcessView*> viewsIterator(this->views);
-	while (viewsIterator.hasNext())
-	{
-		ProcessChangedEvent* event = new ProcessChangedEvent(_proc);
-		AbstractProcessView* view = viewsIterator.next();
-		QApplication::instance()->postEvent(view, event);
-	}
+  QListIterator<AbstractProcessView*> viewsIterator(this->views);
+  while (viewsIterator.hasNext())
+  {
+    AbstractProcessView* view = viewsIterator.next();
 
-	bool shutdown = true;
-	QListIterator<Process*> procsIterator(this->procs);
-	while (procsIterator.hasNext())
-	{
-		Process* process = procsIterator.next();
-		shutdown &= process->state == Process::FINISHED
-				 || process->state == Process::DETACHED;
-	}
+    QEvent* event = NULL;
+    if (type == ProcessAddedEvent::PROCESS_ADDED_EVENT)
+    {
+      event = new ProcessAddedEvent(process);
+    } else
+    if (type == ProcessRemovedEvent::PROCESS_REMOVED_EVENT)
+    {
+      event = new ProcessRemovedEvent(process);
+    } else
+    if (type == ProcessChangedEvent::PROCESS_CHANGED_EVENT)
+    {
+      event = new ProcessChangedEvent(process);
+    } else
+    if (type == ShutDownEvent::SHUTDOWN_EVENT)
+    {
+      event = new ShutDownEvent();
+    }
 
-	if (shutdown)
-	{
-		this->shutdown();
-	}
+    if (event != NULL)
+      QApplication::instance()->postEvent(view, event);
+  }
+
+  if (type == ProcessChangedEvent::PROCESS_CHANGED_EVENT)
+    this->CheckProcessStates();
 }
 
-void Model::detachFromProcess(Process* _proc)
+void Model::AddProcess(int _id)
 {
-	if (_proc->watchdog != NULL && _proc->state == Process::ATTACHED)
-	{
-		_proc->watchdog->stop();
-	}
+  Process* process = this->getProcess(_id);
+  if (process == NULL)
+  {
+    process = new Process(_id, Process::DETACHED);
+    this->procs.append(process);
+    this->SendViews(process, ProcessAddedEvent::PROCESS_ADDED_EVENT);
+
+    process->watchdog = new ProcessWatchDog(this, process);
+    process->watchdog->start();
+  }
 }
 
-void Model::attachToProcess(Process* _proc)
+void Model::RemoveProcess(int _id)
 {
-	ProcessWatchDog* watchdog = new ProcessWatchDog(this, _proc);
-	watchdog->start();
+  Process* process = this->getProcess(_id);
+  if (process != NULL)
+  {
+    this->procs.removeAll(process);
+    this->SendViews(process, ProcessRemovedEvent::PROCESS_REMOVED_EVENT);
+
+    ProcessWatchDog* watchdog = process->watchdog;
+    if (watchdog != NULL)
+      watchdog->stop();
+  }
 }
 
-Process* Model::addNewProcess(int _id)
+void Model::CheckProcessStates()
 {
-	Process* process = this->getProcess(_id);
-	if (process == NULL)
-	{
-		process = new Process(_id, Process::DETACHED);
-		this->procs.append(process);
-	}
-	return process;
+  bool shutdown = this->procs.count() > 0x00;
+
+  QListIterator<Process*> procsIterator(this->procs);
+  while (procsIterator.hasNext())
+  {
+    Process* process = procsIterator.next();
+    shutdown &= process->state == Process::FINISHED;
+  }
+
+  if (shutdown)
+  {
+    this->SendViews(NULL, ShutDownEvent::SHUTDOWN_EVENT);
+    Utils::shutDown();
+  }
 }
 
 Process* Model::getProcess(int _id)
 {
-	Process* process = NULL;
+  Process* process = NULL;
 
-	QListIterator<Process*> iterator(this->procs);
-	while (iterator.hasNext())
-	{
-		Process* current = iterator.next();
-		if (current->id == _id)
-		{
-			process = current;
-			break;
-		}
-	}
-	return process;
-}
-
-void Model::shutdown()
-{
-	QListIterator<AbstractProcessView*> viewsIterator(this->views);
-	while (viewsIterator.hasNext())
-	{
-		AbstractProcessView* view = viewsIterator.next();
-		QApplication::instance()->postEvent(view, new ShutDownEvent());
-	}
-
-        Utils::shutDown();
+  QListIterator<Process*> iterator(this->procs);
+  while (iterator.hasNext())
+  {
+    Process* current = iterator.next();
+    if (current->id == _id)
+    {
+      process = current;
+      break;
+    }
+  }
+  return process;
 }

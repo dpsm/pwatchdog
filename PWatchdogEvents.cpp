@@ -17,18 +17,14 @@
  */
 #include "PWatchdogEvents.h"
 
-QEvent::Type ProcessChangedEvent::PROCESS_CHANGED_EVENT = QEvent::Type(
-		QEvent::registerEventType());
-QEvent::Type ShutDownEvent::SHUTDOWN_EVENT = QEvent::Type(
-		QEvent::registerEventType());
+QEvent::Type ProcessAddedEvent::PROCESS_ADDED_EVENT =
+  QEvent::Type(QEvent::registerEventType());
 
-ProcessChangedEvent::ProcessChangedEvent(Process* _proc) :
-	QEvent(ProcessChangedEvent::PROCESS_CHANGED_EVENT), proc(_proc)
-{
-}
+QEvent::Type ProcessRemovedEvent::PROCESS_REMOVED_EVENT =
+  QEvent::Type(QEvent::registerEventType());
 
-ShutDownEvent::ShutDownEvent() :
-	QEvent(ShutDownEvent::SHUTDOWN_EVENT)
-{
-}
+QEvent::Type ProcessChangedEvent::PROCESS_CHANGED_EVENT =
+  QEvent::Type(QEvent::registerEventType());
 
+QEvent::Type ShutDownEvent::SHUTDOWN_EVENT =
+  QEvent::Type(QEvent::registerEventType());

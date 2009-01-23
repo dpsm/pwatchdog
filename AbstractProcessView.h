@@ -19,15 +19,22 @@
 #ifndef ABSTRACTPROCESSVIEW_H_
 #define ABSTRACTPROCESSVIEW_H_
 
-#include "qmainwindow.h"
+#import <QObject.h>
 
-class AbstractProcessView: public QMainWindow
+class Process;
+
+/*
+ * AbstractProcessView class defines a set of virtual
+ * functions that must be handled by any process view.
+ */
+class AbstractProcessView : public QObject
 {
-public:
-	AbstractProcessView(QWidget *parent = 0, Qt::WindowFlags flags = 0) :
-		QMainWindow(parent, flags)
-	{
-	}
+  public:
+    virtual void ProcessAdded(Process* _process)   = 0x00;
+    virtual void ProcessRemoved(Process* _process) = 0x00;
+    virtual void ProcessChanged(Process* _process) = 0x00;
+    virtual void ShutdownInitiated()               = 0x00;
+    virtual void Display()                         = 0x00;
 };
 
 #endif /* ABSTRACTPROCESSVIEW_H_ */

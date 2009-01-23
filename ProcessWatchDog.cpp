@@ -20,10 +20,11 @@
 #include "ProcessWatchDog.h"
 #include "Utils.h"
 
-ProcessWatchDog::ProcessWatchDog(Model* _model, Process* _proc) :
-	model(_model), proc(_proc)
+ProcessWatchDog::ProcessWatchDog(Model* _model, Process* _proc)
 {
-	this->proc->watchdog = this;
+  this->model = _model;
+  this->proc  = _proc;
+  this->proc->watchdog = this;
 }
 
 ProcessWatchDog::~ProcessWatchDog()
@@ -32,19 +33,19 @@ ProcessWatchDog::~ProcessWatchDog()
 
 void ProcessWatchDog::run()
 {
-	Utils::waitProcess(this);
+  Utils::waitProcess(this);
 }
 
 void ProcessWatchDog::stop()
 {
-	this->terminate();
-	this->wait();
+  this->terminate();
+  this->wait();
 
-	this->proc->state = Process::DETACHED;
-	model->processStateChanged(this->proc);
+  this->proc->state = Process::DETACHED;
+  model->SendViews(this->proc, ProcessChangedEvent::PROCESS_CHANGED_EVENT);
 }
 
 void ProcessWatchDog::sleep(long unsigned int _interval)
 {
-	QThread::sleep(_interval);
+  QThread::sleep(_interval);
 }

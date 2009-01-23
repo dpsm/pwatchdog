@@ -24,40 +24,40 @@
 
 void Utils::waitProcess(ProcessWatchDog* watchdog)
 {
-	Process* proc  = watchdog->getProcess();
-	Model* 	 model = watchdog->getModel();
+  Process* proc  = watchdog->getProcess();
+  Model*   model = watchdog->getModel();
 
-	HANDLE process = OpenProcess(SYNCHRONIZE | PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, proc->id);
-	if (process != NULL)
-	{
-		WCHAR buffer[Process::MAX_PROCESS_NAME_LENGTH];
-		GetModuleFileNameEx(process, NULL, buffer, Process::MAX_PROCESS_NAME_LENGTH);
-		wcstombs(proc->name, buffer, Process::MAX_PROCESS_NAME_LENGTH);
+  HANDLE process = OpenProcess(SYNCHRONIZE | PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, proc->id);
+  if (process != NULL)
+  {
+    WCHAR buffer[Process::MAX_PROCESS_NAME_LENGTH];
+    GetModuleFileNameEx(process, NULL, buffer, Process::MAX_PROCESS_NAME_LENGTH);
+    wcstombs(proc->name, buffer, Process::MAX_PROCESS_NAME_LENGTH);
 
-		proc->state = Process::ATTACHED;
-		model->processStateChanged(proc);
-		if (WaitForSingleObject(process, INFINITE) != WAIT_FAILED)
-		{
-			proc->state = Process::FINISHED;
-			model->processStateChanged(proc);
-		}
-		else
-		{
-			proc->state = Process::FAILED_WAIT;
-			model->processStateChanged(proc);
-		}
-		CloseHandle(process);
-	}
-	else
-	{
-		proc->state = Process::FAILED_ATTACH;
-		model->processStateChanged(proc);
-	}
+    proc->state = Process::ATTACHED;
+    model->SendViews(proc, ProcessChangedEvent::PROCESS_CHANGED_EVENT);
+    if (WaitForSingleObject(process, INFINITE) != WAIT_FAILED)
+    {
+      proc->state = Process::FINISHED;
+      model->SendViews(proc, ProcessChangedEvent::PROCESS_CHANGED_EVENT);
+    }
+    else
+    {
+      proc->state = Process::FAILED_WAIT;
+      model->SendViews(proc, ProcessChangedEvent::PROCESS_CHANGED_EVENT);
+    }
+    CloseHandle(process);
+  }
+  else
+  {
+    proc->state = Process::FAILED_ATTACH;
+    model->SendViews(proc, ProcessChangedEvent::PROCESS_CHANGED_EVENT);
+  }
 }
 
 void Utils::shutDown()
 {
-	Win32PowerManager::Shutdown();
+//    Win32PowerManager::Shutdown();
 }
 
 

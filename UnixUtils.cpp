@@ -25,36 +25,36 @@ using std::endl;
 
 void Utils::waitProcess(ProcessWatchDog* watchdog)
 {
-	Process* proc  = watchdog->getProcess();
-	Model* 	 model = watchdog->getModel();
+  Process* proc  = watchdog->getProcess();
+  Model*   model = watchdog->getModel();
 
-	proc->state = Process::ATTACHED;
-	model->processStateChanged(proc);
+  proc->state = Process::ATTACHED;
+  model->SendViews(proc, ProcessChangedEvent::PROCESS_CHANGED_EVENT);
 
-	QString command = QString("bash -c \"while ps -p %1 > /dev/null; do sleep 1; done\"")
-		.arg(QString::number(proc->id));
+  QString command = QString("bash -c \"while ps -p %1 > /dev/null; do sleep 1; done\"")
+          .arg(QString::number(proc->id));
 
-	const char* cmd = command.toAscii();
-	int exit = system(cmd);
-	if (exit >= 0)
-	{
-		proc->state = Process::FINISHED;
-		model->processStateChanged(proc);
-	}
-	else
-	{
-		proc->state = Process::FAILED_WAIT;
-		model->processStateChanged(proc);
-	}
+  const char* cmd = command.toAscii();
+  int exit = system(cmd);
+  if (exit >= 0)
+  {
+    proc->state = Process::FINISHED;
+    model->SendViews(proc, ProcessChangedEvent::PROCESS_CHANGED_EVENT);
+  }
+  else
+  {
+    proc->state = Process::FAILED_WAIT;
+    model->SendViews(proc, ProcessChangedEvent::PROCESS_CHANGED_EVENT);
+  }
 }
 
 void Utils::shutDown()
 {
-	const char* cmd = "bash -c \"sudo shutdown -h +1\"";
-	int exit = system(cmd);
-	if (exit < 0)
-	{
-		cerr << "Unable to shutdown machine. Exit code " << exit << "." << endl;	
-	}
+  const char* cmd = "bash -c \"sudo shutdown -h +1\"";
+  int exit = system(cmd);
+  if (exit < 0)
+  {
+    cerr << "Unable to shutdown machine. Exit code " << exit << "." << endl;
+  }
 }
 

@@ -16,13 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "View.h"
+#include "MainWindow.h"
+#include "Model.h"
 
 int main(int argc, char **argv)
 {
-	QApplication app(argc, argv);
-	MainWindow window;
-	window.show();
-	return app.exec();
+  QApplication app(argc, argv);
+  Model model;
+  MainWindow window(&model);
+  window.Display();
+  return app.exec();
 }
 

@@ -27,26 +27,26 @@ class Model;
 
 class ProcessWatchDog: public QThread
 {
-public:
-	ProcessWatchDog(Model* _model, Process* _proc);
-	virtual ~ProcessWatchDog();
+  public:
+    ProcessWatchDog(Model* _model, Process* _proc);
+    virtual ~ProcessWatchDog();
 
-	Process* getProcess()
-	{
-		return this->proc;
-	}
+    Process* getProcess()
+    {
+            return this->proc;
+    }
 
-	Model* getModel()
-	{
-		return this->model;
-	}
+    Model* getModel()
+    {
+            return this->model;
+    }
 
-	void sleep(long unsigned int _interval);
-	void stop();
-	void run();
-private:
-	Process* proc;
-	Model* model;
+    void sleep(long unsigned int _interval);
+    void stop();
+    void run();
+  private:
+    Process* proc;
+    Model* model;
 };
 
 #endif /* PROCESSWATCHDOG_H_ */

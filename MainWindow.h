@@ -16,70 +16,53 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef MODEL_H_
-#define MODEL_H_
+#ifndef MAINWINDOW_H_
+#define MAINWINDOW_H_
 
-#include <qapplication.h>
-#include <qlist.h>
+#include <qmainwindow.h>
+#include <qvalidator.h>
+#include <qglobal.h>
+#include <qstring.h>
 
 #include "AbstractProcessView.h"
 #include "PWatchdogEvents.h"
-#include "ProcessWatchDog.h"
-#include "Utils.h"
+#include "ui_pwatchdog.h"
+#include "Model.h"
 
-class ProcessWatchDog;
-
-class Process
+class MainWindow: public AbstractProcessView
 {
-  public:
-    static unsigned int MAX_PROCESS_NAME_LENGTH;
+  Q_OBJECT
 
-    enum State
-    {
-      DETACHED, ATTACHED, FINISHED, FAILED_ATTACH, FAILED_WAIT
-    };
-    //-----------------------------------------------
-    //FUNCTIONS
-    //-----------------------------------------------
-
-    Process(int _id, State _state);
-    virtual ~Process();
-
-    //-----------------------------------------------
-    //ATTRIBUTES
-    //-----------------------------------------------
-
-    ProcessWatchDog* watchdog;
-    State state;
-    char* name;
-    int id;
-};
-
-class Model
-{
   public:
 
     //-----------------------------------------------
     //FUNCTIONS
     //-----------------------------------------------
 
-    Model()
+    MainWindow(Model* _model);
+    virtual~ MainWindow();
+
+    inline Ui::window GetUi()
     {
-
+      return ui;
     }
-    virtual ~Model()
-    {
+    virtual bool event(QEvent* _event);
 
-    }
+    virtual void ProcessAdded(Process* _process);
+    virtual void ProcessRemoved(Process* _process);
+    virtual void ProcessChanged(Process* _process);
+    virtual void ShutdownInitiated();
+    virtual void Display();
 
-    void SendViews(Process* process, QEvent::Type type);
-    Process* getProcess(int _id);
+  private slots:
 
-    void AddProcess(int _id);
-    void RemoveProcess(int _id);
+    //-----------------------------------------------
+    //SLOTS
+    //-----------------------------------------------
 
-    void attachView(AbstractProcessView* _view);
-    void detachView(AbstractProcessView* _view);
+    void DisplayProcess();
+    void AddButtonPressed();
+    void RemoveButtonPressed();
 
   private:
 
@@ -87,14 +70,16 @@ class Model
     //FUNCTIONS
     //-----------------------------------------------
 
-    void CheckProcessStates();
-
+    QListWidgetItem* GetProcessItem(Process* _process);
+    void UpdateProcessStatusIcon(Process* _process);
+    void ResetUI();
     //-----------------------------------------------
     //ATTRIBUTES
     //-----------------------------------------------
 
-    QList<AbstractProcessView*> views;
-    QList<Process*> procs;
+    QMainWindow* window;
+    Ui::window ui;
+    Model* model;
 };
 
-#endif /* MODEL_H_ */
+#endif /* MAINWINDOW_H_ */
